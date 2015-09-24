@@ -13,6 +13,8 @@
 
 </style>
 <body>
+<h1>Andere</h1>
+<table id="residueData"></table>
 <input type="number" id="numberOfRefugees" value="1000000">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
 <script>
@@ -21,8 +23,9 @@ var width = 960,
     height = 500,
     radius = Math.min(width, height) / 2;
 
-var color = d3.scale.ordinal()
-    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+var color = d3.scale.linear()
+    .domain([1, 30])
+    .range(["rgb(200, 220, 250)", "rgb(71, 137, 237)"]);
 
 var arc = d3.svg.arc()
     .outerRadius(radius - 10)
@@ -40,48 +43,104 @@ var svg = d3.select("body").append("svg")
 
 var data = [
     {
-        percentage: 6.33049,
-            region: "PP"
+        percentage: 21.24,
+            region: "NW"
     },
     {
-        percentage: 12.97496,
+        percentage: 15.33,
+            region: "BY"
+    },
+     {
+        percentage: 12.97,
             region: "BW"
     },
-     {
-        percentage: 15.33049,
-            region: "BA"
-    },
          {
-        percentage: 5.33049,
-            region: "MU"
+        percentage: 9.36,
+            region: "NI"
     },
      {
-        percentage: 4.93472,
-            region: "NW"
+        percentage: 7.32,
+            region: "HE"
+    },
+    {
+        percentage: 5.10,
+            region: "SN"
+    },
+    {
+        percentage: 5.05,
+            region: "BE"
+    },
+    {
+        percentage: 4.83,
+            region: "RP"
+    },
+    {
+        percentage: 3.39,
+            region: "SH"
+    },
+    {
+        percentage: 3.08,
+            region: "BB"
+    },
+    {
+        percentage: 2.86,
+            region: "ST"
+    },
+    {
+        percentage: 2.75,
+            region: "TH"
+    },
+    {
+        percentage: 2.53,
+            region: "HH"
+    },
+    {
+        percentage: 2.04,
+            region: "MV"
+    },
+    {
+        percentage: 1.22,
+            region: "SL"
+    },
+    {
+        percentage: 0.94,
+            region: "HB"
     }
 ]
+
+var reducedData = [].concat(data);
+reducedData = reducedData.filter(function(entry){
+    return entry.percentage > 3.5   
+});
+var residueData = [].concat(data);
+residueData = residueData.filter(function(entry){
+    return entry.percentage <= 3.5   
+});
 var percentSum = 0;
-data.forEach(function(entry) {
+reducedData.forEach(function(entry) {
     percentSum += entry.percentage;
 });
-data.push({
+reducedData.push({
     percentage: 100 - percentSum,
-    region: "Others"
+    region: "Andere"
 });
 
   var g = svg.selectAll(".arc")
-      .data(pie(data))
+      .data(pie(reducedData))
     .enter().append("g")
       .attr("class", "arc");
 
   g.append("path")
       .attr("d", arc)
-      .style("fill", function(entry) { return color(entry.data.region); });
+      .style("fill", function(entry) { return color(entry.data.percentage); });
+var getNumberOfRefugees = function(entry) {
+      var totalNumberOfRefugees = document.getElementById('numberOfRefugees').value;
+      var numberOfRefugees = totalNumberOfRefugees * (entry.percentage / 100);
+      return Math.round(numberOfRefugees); }
 
 var getTextValue = function(entry) {
-      var totalNumberOfRefugees = document.getElementById('numberOfRefugees').value;
-      var numberOfRefugees = totalNumberOfRefugees * (entry.data.percentage / 100);
-      return entry.data.region + " - " + Math.round(numberOfRefugees); }
+      
+      return entry.data.region + " - " + getNumberOfRefugees(entry.data); }
 
   var textElement = g.append("text")
       .attr("transform", function(entry) { return "translate(" + arc.centroid(entry) + ")"; })
@@ -92,6 +151,11 @@ var getTextValue = function(entry) {
   document.getElementById('numberOfRefugees').addEventListener('keypress', function() {
         textElement.text(getTextValue);
   });
+  var tableContent = '';
+  residueData.forEach(function(entry) {
+    tableContent += "<tr><td>"+entry.region+"</td><td>"+getNumberOfRefugees(entry)+"</td></tr>";
+});
+document.getElementById("residueData").innerHTML = tableContent;
 </script>
 </body>
 </html>
