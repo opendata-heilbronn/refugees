@@ -170,23 +170,29 @@ var getNumberOfRefugees = function(entry) {
       return Math.round(numberOfRefugees); }
 
 var getTextValue = function(entry) {
-      
-      return entry.data.region + " - " + getNumberOfRefugees(entry.data); }
-
+    return entry.data.region + " - " + getNumberOfRefugees(entry.data); 
+}
+var tableElement = document.getElementById("residueData");
+var setTableContent = function(){
+    var tableContent = '';
+    residueData.forEach(function(entry) {
+        tableContent += "<tr><td>"+entry.region+"</td><td>"+getNumberOfRefugees(entry)+"</td></tr>";
+    });
+    return tableContent;
+}
   var textElement = g.append("text")
       .attr("transform", function(entry) { return "translate(" + arc.centroid(entry) + ")"; })
       .attr("dy", ".35em")
       .style("text-anchor", "middle")
       .text(getTextValue);
-
-  document.getElementById('numberOfRefugees').addEventListener('keypress', function() {
+var updateData  = function() {
         textElement.text(getTextValue);
-  });
-  var tableContent = '';
-  residueData.forEach(function(entry) {
-    tableContent += "<tr><td>"+entry.region+"</td><td>"+getNumberOfRefugees(entry)+"</td></tr>";
-});
-document.getElementById("residueData").innerHTML = tableContent;
+        tableElement.innerHTML = setTableContent();
+  }
+document.getElementById('numberOfRefugees').addEventListener('keyup', function(){ updateData(); } );
+document.getElementById('numberOfRefugees').addEventListener('onchange', function(){ updateData(); } );
+
+tableElement.innerHTML = setTableContent();
 </script>
 </html>
 
