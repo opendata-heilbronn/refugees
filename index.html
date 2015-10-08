@@ -36,15 +36,17 @@
             <h3 class="text-center text-danger">
                 Wie werden sie verteilt?
             </h3>
-
+            <div id="pieChart">
+            </div>
+            <h1>Andere</h1>
+            <table id="residueData"></table>
             <div class="panel panel-xs">
                 <div class="panel-body"> <p class="text-right text-muted">Made by Anna Agafonova and Ketoma Kemanji</p> </div>
             </div>
         </div>
     </div>
 </div>
-<h1>Andere</h1>
-<table id="residueData"></table>
+
 </body>
 <script>
 
@@ -64,7 +66,7 @@ var pie = d3.layout.pie()
     .sort(null)
     .value(function(entry) { return entry.percentage; });
 
-var svg = d3.select("body").append("svg")
+var svg = d3.select("#pieChart").append("svg")
     .attr("width", width)
     .attr("height", height)
   .append("g")
